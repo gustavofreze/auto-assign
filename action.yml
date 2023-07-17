@@ -1,4 +1,4 @@
-name: 'Auto assign assignees'
+name: 'Auto assigns assignees'
 description: 'GitHub action that automatically assigns issues and pull requests to specified assignees.'
 
 inputs:
