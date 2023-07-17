@@ -2,7 +2,6 @@ from typing import List
 
 from github.Repository import Repository
 
-from src.application.domain.events.AssignedIssue import AssignedIssue
 from src.application.domain.models.Issue import Issue
 from src.application.ports.outbound.Issues import Issues
 
@@ -26,7 +25,7 @@ class Adapter(Issues):
 
         return issues
 
-    def apply(self, assigned_issue: AssignedIssue):
+    def apply(self, assigned_issue: Issue):
         assignees = assigned_issue.assignees
         issue = self.__repository.get_issue(number=assigned_issue.number)
         issue.add_to_assignees(*assignees)

@@ -2,4 +2,6 @@ from abc import ABC
 
 
 class Command(ABC):
-    pass
+    """
+    Abstract class to represent a command.
+    """

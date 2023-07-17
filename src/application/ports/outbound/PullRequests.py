@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.application.domain.events.AssignedPullRequest import AssignedPullRequest
 from src.application.domain.models.PullRequest import PullRequest
 
 
@@ -16,10 +15,10 @@ class PullRequests(ABC):
         """
 
     @abstractmethod
-    def apply(self, assigned_pull: AssignedPullRequest):
+    def apply(self, assigned_pull: PullRequest):
         """
         Applies assignee assignment to an :class:`PullRequest`.
 
         :param assigned_pull: Pull request assigned with one or more assignees.
-        :type assigned_pull: AssignedPullRequest
+        :type assigned_pull: PullRequest
         """

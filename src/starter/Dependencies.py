@@ -4,7 +4,7 @@ from github.Repository import Repository
 
 from src.application.handlers.AssignIssueHandler import AssignIssueHandler
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
-from src.application.handlers.AssignPullRequestIssueHandler import AssignPullRequestIssueHandler as FullHandler
+from src.application.handlers.AssignPullRequestIssueHandler import AssignPullRequestIssueHandler
 from src.driven.assignees.Adapter import Adapter as AssigneesAdapter
 from src.driven.issues.Adapter import Adapter as IssuesAdapter
 from src.driven.pull_requests.Adapter import Adapter as PullRequestAdapter
@@ -22,7 +22,7 @@ class Dependencies(DeclarativeContainer):
 
     pull_handler = providers.Factory(AssignPullRequestHandler, pulls=pull_adapter, assignees=assignees)
     issue_handler = providers.Factory(AssignIssueHandler, issues=issues_adapter, assignees=assignees)
-    pull_issue_handler = providers.Factory(FullHandler, pulls=pull_adapter, issues=issues_adapter, assignees=assignees)
+    pull_issue_handler = providers.Factory(AssignPullRequestIssueHandler, pulls=pull_handler, issues=issue_handler)
 
     assigners = providers.Singleton(
         Assigners,

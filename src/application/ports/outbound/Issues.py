@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.application.domain.events.AssignedIssue import AssignedIssue
 from src.application.domain.models.Issue import Issue
 
 
@@ -16,10 +15,10 @@ class Issues(ABC):
         """
 
     @abstractmethod
-    def apply(self, assigned_issue: AssignedIssue):
+    def apply(self, assigned_issue: Issue):
         """
         Applies assignee assignment to an :class:`Issue`.
 
         :param assigned_issue: Issue assigned with one or more assignees.
-        :type assigned_issue: AssignedIssue
+        :type assigned_issue: Issue
         """

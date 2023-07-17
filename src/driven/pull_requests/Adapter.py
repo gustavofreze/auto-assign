@@ -2,7 +2,6 @@ from typing import List
 
 from github.Repository import Repository
 
-from src.application.domain.events.AssignedPullRequest import AssignedPullRequest
 from src.application.domain.models.PullRequest import PullRequest
 from src.application.ports.outbound.PullRequests import PullRequests
 
@@ -26,7 +25,7 @@ class Adapter(PullRequests):
 
         return pulls
 
-    def apply(self, assigned_pull: AssignedPullRequest):
+    def apply(self, assigned_pull: PullRequest):
         assignees = assigned_pull.assignees
         pull = self.__repository.get_pull(number=assigned_pull.number)
         pull.add_to_assignees(*assignees)
