@@ -1,0 +1,9 @@
+venv
+.idea
+htmlcov
+**.coverage
+**__pycache__
+.pytest_cache
+**.pytest_cache
+.coverage
+.mutmut-cache

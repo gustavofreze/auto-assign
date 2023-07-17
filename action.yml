@@ -1,0 +1,31 @@
+name: 'Auto assign assignees'
+description: 'GitHub action that automatically assigns issues and pull requests to specified assignees.'
+
+inputs:
+  assignees:
+    required: true
+    description: 'Comma-separated list of usernames. Assignments will be made to them.'
+  github_token:
+    default: '${{ github.token }}'
+    required: true
+    description: 'GitHub app installation access token.'
+  allow_self_assign:
+      default: 'true'
+      required: false
+      description: 'Flag that allows self-assignment to an issue or pull request.'
+  allow_no_assignees:
+    default: 'false'
+    required: false
+    description: 'Flag that prevents the action from failing when there are no assignees.'
+  assignment_options:
+    default: 'ISSUE'
+    required: false
+    description: 'Assignment options in a GitHub action related to automatically assigning issues and pull requests.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  icon: 'git-pull-request'
+  color: 'gray-dark'

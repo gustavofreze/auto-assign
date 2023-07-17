@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip -r requirements.txt
+
+  auto-review:
+    name: Auto review
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run Pylint
+        run: python3 -m pylint src test --rcfile=.pylintrc
+
+  tests:
+    name: Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run tests
+        env:
+          INPUT_ASSIGNEES: 'user1'
+          INPUT_GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          INPUT_ALLOW_SELF_ASSIGN: 'false'
+          INPUT_ALLOW_NO_ASSIGNEES: 'true'
+          INPUT_ASSIGNMENT_OPTIONS: 'ISSUE,PULL_REQUEST'
+        run: >-
+          coverage run --rcfile=.coveragerc -m unittest discover test "*Test.py"
+          && coverage report && coverage html
