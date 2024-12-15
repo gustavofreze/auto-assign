@@ -82,6 +82,6 @@ jobs:
 
       - name: Run tests
         run: |
-          .venv/bin/python -m coverage run --rcfile=.coveragerc -m unittest discover test '*Test.py'
-            && .venv/bin/python -m coverage report
+          .venv/bin/python -m coverage run --rcfile=.coveragerc -m unittest discover test '*Test.py' \
+            && .venv/bin/python -m coverage report \
             && .venv/bin/python -m coverage html
