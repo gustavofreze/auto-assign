@@ -1,9 +1,9 @@
 venv
-.idea
 htmlcov
-**.coverage
-**__pycache__
-.pytest_cache
-**.pytest_cache
+
+.venv
+.idea
 .coverage
-.mutmut-cache
+
+poetry.lock
+**__pycache__

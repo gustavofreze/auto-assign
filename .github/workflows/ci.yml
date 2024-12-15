@@ -2,8 +2,12 @@ name: CI
 
 on:
   pull_request:
-    types:
-      - opened
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: '3.11'
 
 jobs:
   build:
@@ -12,12 +16,27 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
-      - name: Install dependencies
-        run: python -m pip install --upgrade pip -r requirements.txt
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Configure environment
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --with dev --sync --no-root
 
   auto-review:
     name: Auto review
@@ -26,10 +45,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Run Pylint
-        run: python3 -m pylint src test --rcfile=.pylintrc
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Use cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Run review
+        run: .venv/bin/python -m pylint src test --rcfile=.pylintrc
 
   tests:
     name: Tests
@@ -38,15 +67,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Use cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
       - name: Run tests
-        env:
-          INPUT_ASSIGNEES: 'user1'
-          INPUT_GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          INPUT_ALLOW_SELF_ASSIGN: 'false'
-          INPUT_ALLOW_NO_ASSIGNEES: 'true'
-          INPUT_ASSIGNMENT_OPTIONS: 'ISSUE,PULL_REQUEST'
-        run: >-
-          coverage run --rcfile=.coveragerc -m unittest discover test "*Test.py"
-          && coverage report && coverage html
+        run: |
+          .venv/bin/python -m coverage run --rcfile=.coveragerc -m unittest discover test '*Test.py' \
+            && .venv/bin/python -m coverage report \
+            && .venv/bin/python -m coverage html
