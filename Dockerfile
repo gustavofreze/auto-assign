@@ -5,6 +5,8 @@ LABEL author="Gustavo Freze" \
       org.label-schema.name="gustavofreze/auto-assign" \
       org.label-schema.schema-version="1.0"
 
+ENV PYTHONPATH="${PYTHONPATH}:/app"
+
 WORKDIR /app
 
 COPY pyproject.toml ./
