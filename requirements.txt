@@ -1,5 +1,0 @@
-pylint==2.17.4
-PyGithub==1.59
-coverage==7.2.7
-parameterized==0.9.0
-dependency-injector==4.41.0

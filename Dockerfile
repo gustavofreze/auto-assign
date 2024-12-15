@@ -5,14 +5,20 @@ LABEL author="Gustavo Freze" \
       org.label-schema.name="gustavofreze/auto-assign" \
       org.label-schema.schema-version="1.0"
 
-ENV PIP_PATH="/venv/bin/pip"
-ENV PYTHONPATH="${PYTHONPATH}:/app"
+ARG VENV_PATH=/app/.venv
 
-COPY src ./app/src
-COPY requirements.txt .
+ENV PIP_PATH=${VENV_PATH}/bin/pip
+ENV POETRY_NO_INTERACTION=1
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
-RUN python -m venv /venv \
-    && ${PIP_PATH} install --no-cache-dir --upgrade pip \
-    && ${PIP_PATH} install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
-CMD ["/venv/bin/python", "-m", "src.main"]
+COPY pyproject.toml poetry.lock ./
+
+RUN pip install --upgrade pip poetry \
+        && poetry config virtualenvs.in-project true \
+        && poetry install --sync --no-root
+
+COPY src ./src
+
+CMD [".venv/bin/python", "-m", "src.main"]
