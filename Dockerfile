@@ -19,6 +19,7 @@ RUN pip install --upgrade pip poetry \
         && poetry config virtualenvs.in-project true \
         && poetry install --sync --no-root
 
+COPY .venv ./
 COPY src ./src
 
 CMD [".venv/bin/python", "-m", "src.main"]
