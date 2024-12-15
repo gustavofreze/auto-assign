@@ -13,7 +13,7 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml ./
 
 RUN pip install --upgrade pip poetry \
         && poetry config virtualenvs.in-project true \
