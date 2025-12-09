@@ -2,16 +2,16 @@ from enum import IntEnum
 
 
 class ExitCode(IntEnum):
-    """Enumeration of possible exit codes for the application."""
+    """Exit codes used by the assignment process."""
 
     SUCCESS = 0
-    """The operation completed successfully without any errors."""
+    """Execution completed successfully."""
 
     UNEXPECTED_FAILURE = 1
-    """A non-recoverable or unhandled failure occurred during execution."""
+    """An unexpected error occurred during execution."""
 
-    CONFIGURATION_MISSING = 2
-    """Required environment variables or configuration values were not provided."""
+    ASSIGNMENT_FAILURE = 2
+    """Failed to assign pull requests or issues."""
 
-    ASSIGNMENT_NOT_POSSIBLE = 3
-    """The assignment could not be completed due to invalid conditions."""
+    CONFIGURATION_MISSING = 3
+    """A required configuration value is missing."""

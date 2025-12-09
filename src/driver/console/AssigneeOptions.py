@@ -26,10 +26,6 @@ class AssigneeOptions:
 
         return assignment_kind
 
-    @property
-    def assignment_kind(self) -> str:
-        return self.__assignment_kind
-
     def is_issue_only(self) -> bool:
         return self.__assignment_kind == self.ISSUE
 

@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
 from src.application.commands.AssignPullRequests import AssignPullRequests
-from src.application.domain.exceptions.PullRequestNotAssigned import PullRequestNotAssigned
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
 
 
@@ -9,14 +8,16 @@ class AssignPullRequestHandlerMock(MagicMock):
 
     def __init__(self) -> None:
         super().__init__(spec=AssignPullRequestHandler)
-        self._pull_request_not_assigned = False
+        self.handle = MagicMock(side_effect=self._capture_command)
+        self.handled_commands = []
 
-    def handle(self, command: AssignPullRequests):
-        if self._pull_request_not_assigned is None:
-            return
+    def _capture_command(self, command: AssignPullRequests):
+        self.handled_commands.append(command)
 
-        raise PullRequestNotAssigned(assignee=command.actor)
+    def with_exception(self, exception: Exception):
+        self.handle.side_effect = exception
 
-    def with_pull_request_not_assigned(self):
-        self._pull_request_not_assigned = True
-        return self
+    def reset(self):
+        super().reset_mock()
+        self.handled_commands = []
+        self.handle.side_effect = self._capture_command

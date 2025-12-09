@@ -19,6 +19,7 @@ class AssignPullRequestIssueHandler(CommandHandler):
             allow_self_assign=command.allow_self_assign,
             allow_no_assignees=command.allow_no_assignees
         )
+
         assign_issues = AssignIssues(
             actor=command.actor,
             assignees=command.assignees,

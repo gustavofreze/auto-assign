@@ -71,7 +71,7 @@ class Assigners:
 
         except DomainException as exception:
             self.__logger.error(str(exception))
-            return ExitCode.ASSIGNMENT_NOT_POSSIBLE
+            return ExitCode.ASSIGNMENT_FAILURE
 
         except Exception as exception:
             self.__logger.error(str(exception))
