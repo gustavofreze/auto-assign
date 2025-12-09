@@ -1,17 +1,16 @@
 import logging
 
-from src.driver.console.AssigneeOptions import AssigneeOptions
-from src.driver.console.ExitCode import ExitCode
-from src.driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
-from src.application.domain.exceptions.DomainException import DomainException
 from src.application.commands.AssignIssues import AssignIssues
 from src.application.commands.AssignPullRequestIssue import AssignPullRequestIssue
 from src.application.commands.AssignPullRequests import AssignPullRequests
+from src.application.domain.exceptions.DomainException import DomainException
 from src.application.handlers.AssignIssueHandler import AssignIssueHandler
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
 from src.application.handlers.AssignPullRequestIssueHandler import AssignPullRequestIssueHandler
-from src.driven.settings import (ASSIGNMENT_OPTIONS, ASSIGNEES, ALLOW_NO_ASSIGNEES,
-                                 ALLOW_SELF_ASSIGN, GITHUB_ACTOR)
+from src.driver.console.AssigneeOptions import AssigneeOptions
+from src.driver.console.ExitCode import ExitCode
+from src.driver.console.Request import Request
+from src.driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
 
 
 class Assigners:
@@ -23,27 +22,26 @@ class Assigners:
             issue_handler: AssignIssueHandler,
             pull_issue_handler: AssignPullRequestIssueHandler
     ) -> None:
+        self.__logger = logger
         self.__pull_handler = pull_handler
         self.__issue_handler = issue_handler
         self.__pull_issue_handler = pull_issue_handler
-        self.__logger = logger
 
-    def execute(self) -> ExitCode:
-        actor = GITHUB_ACTOR
-        options = ASSIGNMENT_OPTIONS
-        assignees = ASSIGNEES
-        allow_self_assign = ALLOW_SELF_ASSIGN
-        allow_no_assignees = ALLOW_NO_ASSIGNEES
-
+    def execute(self, request: Request) -> ExitCode:
         try:
-            assignee_options = AssigneeOptions(options)
+            assignee_options = AssigneeOptions(request.options)
+
+            actor = request.actor
+            assignees = request.assignees
+            no_assignees = request.allow_no_assignees
+            allow_self_assign = request.allow_self_assign
 
             if assignee_options.is_pull_request_and_issue():
                 command = AssignPullRequestIssue(
                     actor=actor,
                     assignees=assignees,
                     allow_self_assign=allow_self_assign,
-                    allow_no_assignees=allow_no_assignees
+                    allow_no_assignees=no_assignees
                 )
                 self.__pull_issue_handler.handle(command=command)
 
@@ -52,7 +50,7 @@ class Assigners:
                     actor=actor,
                     assignees=assignees,
                     allow_self_assign=allow_self_assign,
-                    allow_no_assignees=allow_no_assignees
+                    allow_no_assignees=no_assignees
                 )
                 self.__pull_handler.handle(command=command)
 
@@ -61,20 +59,20 @@ class Assigners:
                     actor=actor,
                     assignees=assignees,
                     allow_self_assign=allow_self_assign,
-                    allow_no_assignees=allow_no_assignees
+                    allow_no_assignees=no_assignees
                 )
                 self.__issue_handler.handle(command=command)
 
             return ExitCode.SUCCESS
 
         except InvalidAssigneeOptions as exception:
-            self.__logger.error(exception.message)
-            return ExitCode.MISSING_ENVIRONMENT
+            self.__logger.error(str(exception))
+            return ExitCode.CONFIGURATION_MISSING
 
         except DomainException as exception:
-            self.__logger.error(exception.message)
-            return ExitCode.MISSING_ENVIRONMENT
+            self.__logger.error(str(exception))
+            return ExitCode.ASSIGNMENT_NOT_POSSIBLE
 
         except Exception as exception:
             self.__logger.error(str(exception))
-            return ExitCode.UNEXPECTED_ERROR
+            return ExitCode.UNEXPECTED_FAILURE

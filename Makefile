@@ -37,7 +37,7 @@ test: ## Run tests with coverage
 review: ## Run static code analysis
 	@${DOCKER_RUN} "${PYTHON} -m pylint src test --rcfile=.pylintrc"
 
-.PHONY: show-coverage
+.PHONY: show-reports
 show-reports: ## Open static analysis reports (e.g., coverage, lints) in the browser
 	@sensible-browser htmlcov/index.html
 
@@ -63,7 +63,7 @@ help: ## Display this help message
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Reports"
-	@grep -E '^(show-coverage):.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^(show-reports):.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Cleanup"
