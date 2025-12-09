@@ -1,3 +1,5 @@
+import logging
+
 from dependency_injector import containers, providers
 from github import Github
 from github.Repository import Repository
@@ -26,6 +28,7 @@ class Dependencies(containers.DeclarativeContainer):
 
     assigners = providers.Singleton(
         Assigners,
+        logger=logging.getLogger("Assigners"),
         pull_handler=pull_handler,
         issue_handler=issue_handler,
         pull_issue_handler=pull_issue_handler

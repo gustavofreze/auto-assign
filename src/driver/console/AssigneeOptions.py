@@ -1,6 +1,6 @@
 from typing import Iterable, FrozenSet
 
-from driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
+from src.driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
 
 
 class AssigneeOptions:
@@ -9,8 +9,8 @@ class AssigneeOptions:
     PULL_REQUEST_ISSUE = "PULL_REQUEST_ISSUE"
 
     def __init__(self, raw_options: Iterable[str]) -> None:
-        self.__assignment_kind = self.__determine_assignment_kind()
         self.__normalized_options: FrozenSet[str] = frozenset(raw_options or [])
+        self.__assignment_kind = self.__determine_assignment_kind()
 
     def __determine_assignment_kind(self) -> str:
         decision_table = {

@@ -1,7 +1,7 @@
 import sys
 import time
 
-from driver.console.ExitCode import ExitCode
+from src.driver.console.ExitCode import ExitCode
 from src.starter.Dependencies import Dependencies
 
 
@@ -16,4 +16,5 @@ def main() -> ExitCode:
 
 
 if __name__ == '__main__':
-    sys.exit(int(main()))
+    exit_code = main()
+    sys.exit(exit_code.value)

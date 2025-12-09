@@ -1,9 +1,9 @@
 import logging
 
-from application.domain.exceptions.DomainException import DomainException
-from driver.console.AssigneeOptions import AssigneeOptions
-from driver.console.ExitCode import ExitCode
-from driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
+from src.driver.console.AssigneeOptions import AssigneeOptions
+from src.driver.console.ExitCode import ExitCode
+from src.driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
+from src.application.domain.exceptions.DomainException import DomainException
 from src.application.commands.AssignIssues import AssignIssues
 from src.application.commands.AssignPullRequestIssue import AssignPullRequestIssue
 from src.application.commands.AssignPullRequests import AssignPullRequests
@@ -18,10 +18,10 @@ class Assigners:
 
     def __init__(
             self,
+            logger: logging.Logger,
             pull_handler: AssignPullRequestHandler,
             issue_handler: AssignIssueHandler,
-            pull_issue_handler: AssignPullRequestIssueHandler,
-            logger: logging.Logger
+            pull_issue_handler: AssignPullRequestIssueHandler
     ) -> None:
         self.__pull_handler = pull_handler
         self.__issue_handler = issue_handler
