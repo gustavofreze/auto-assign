@@ -26,7 +26,11 @@ class Environment:
         return False
 
     def to_list(self) -> List:
-        if isinstance(self.__value, str) and ',' in self.__value:
-            return [value.strip() for value in self.__value.split(',')]
+        values: List[str]
 
-        return [self.__value]
+        if isinstance(self.__value, str) and ',' in self.__value:
+            values = [value.strip() for value in self.__value.split(',')]
+        else:
+            values = [self.__value] if isinstance(self.__value, str) else [str(self.__value)]
+
+        return [value for value in values if value]

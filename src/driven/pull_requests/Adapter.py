@@ -27,5 +27,9 @@ class Adapter(PullRequests):
 
     def apply(self, assigned_pull: PullRequest):
         assignees = assigned_pull.assignees
+
+        if not assignees:
+            return
+
         pull = self.__repository.get_pull(number=assigned_pull.number)
         pull.add_to_assignees(*assignees)

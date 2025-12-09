@@ -1,17 +1,19 @@
+import sys
 import time
 
+from driver.console.ExitCode import ExitCode
 from src.starter.Dependencies import Dependencies
 
 
-def main():
+def main() -> ExitCode:
     time.tzset()
 
     dependencies = Dependencies()
     dependencies.init_resources()
 
     assigners = dependencies.assigners()
-    assigners.execute()
+    return assigners.execute()
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(int(main()))
