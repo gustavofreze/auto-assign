@@ -18,16 +18,16 @@ class RepositoryMock(MagicMock):
         self.get_pulls = None
         self.get_issue = None
         self.get_issues = None
-        self.get_contributors = None
+        self.get_assignees = None
 
     def add_issues(self, issues: List[dict]) -> None:
         issues = [GitHubIssueMock(number=issue.get('number'), assignees=issue.get('assignees')) for issue in issues]
         self.get_issues = MagicMock(return_value=issues)
         self.get_issue = MagicMock(return_value=issues[0])
 
-    def add_contributors(self, contributors: List[str]) -> None:
-        contributors = [GitHubUserMock(login=login) for login in contributors]
-        self.get_contributors = MagicMock(return_value=contributors)
+    def add_assignees(self, assignees: List[str]) -> None:
+        assignees = [GitHubUserMock(login=login) for login in assignees]
+        self.get_assignees = MagicMock(return_value=assignees)
 
     def add_pull_requests(self, pulls: List[dict]) -> None:
         pulls = [GitHubPullRequestMock(number=pull.get('number'), assignees=pull.get('assignees')) for pull in pulls]
@@ -38,13 +38,13 @@ class RepositoryMock(MagicMock):
         self.get_issues = MagicMock(return_value=[])
         self.get_issue = MagicMock(return_value=None)
 
-    def remove_contributors(self, contributors: List[str]) -> None:
-        contributors = [GitHubUserMock(login=str(random(10))) for _ in contributors]
-        self.get_contributors = MagicMock(return_value=contributors)
+    def remove_assignees(self, assignees: List[str]) -> None:
+        assignees = [GitHubUserMock(login=str(random(10))) for _ in assignees]
+        self.get_assignees = MagicMock(return_value=assignees)
 
     def remove_pull_requests(self) -> None:
         self.get_pulls = MagicMock(return_value=[])
         self.get_pull = MagicMock(return_value=None)
 
-    def with_contributors_exception(self, exception: GithubException):
-        self.get_contributors = MagicMock(side_effect=exception)
+    def with_assignees_exception(self, exception: GithubException):
+        self.get_assignees = MagicMock(side_effect=exception)

@@ -13,9 +13,8 @@ class Adapter(Assignees):
 
     def exists(self, assignees: List[str]) -> List[str]:
         try:
-            contributors = [contributor.login for contributor in self.__repository.get_contributors()]
-            valid_assignees = [assignee for assignee in assignees if assignee in contributors]
-
+            repository_assignees = [assignee.login for assignee in self.__repository.get_assignees()]
+            valid_assignees = [assignee for assignee in assignees if assignee in repository_assignees]
             return valid_assignees
 
         except GithubException:

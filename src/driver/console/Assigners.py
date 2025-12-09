@@ -4,7 +4,8 @@ from src.application.commands.AssignPullRequests import AssignPullRequests
 from src.application.handlers.AssignIssueHandler import AssignIssueHandler
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
 from src.application.handlers.AssignPullRequestIssueHandler import AssignPullRequestIssueHandler
-from src.driven.settings import ASSIGNMENT_OPTIONS, ASSIGNEES, ALLOW_NO_ASSIGNEES, ALLOW_SELF_ASSIGN, GITHUB_ACTOR
+from src.driven.settings import (ASSIGNMENT_OPTIONS, ASSIGNEES, ALLOW_NO_ASSIGNEES,
+                                 ALLOW_SELF_ASSIGN, GITHUB_ACTOR)
 
 
 class Assigners:

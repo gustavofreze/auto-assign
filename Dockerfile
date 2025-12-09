@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM gustavofreze/python:3.14
 
 LABEL author="Gustavo Freze" \
       maintainer="Gustavo Freze" \
@@ -11,9 +11,10 @@ WORKDIR /app
 
 COPY pyproject.toml ./
 
-RUN pip install --upgrade pip poetry \
-        && poetry config virtualenvs.in-project true \
-        && poetry install --sync --no-root
+RUN poetry config virtualenvs.in-project true \
+  && poetry env use python3.14 \
+  && poetry install --no-cache \
+  && poetry sync
 
 COPY src ./src
 

@@ -1,4 +1,4 @@
-from dependency_injector.containers import DeclarativeContainer, providers
+from dependency_injector import containers, providers
 from github import Github
 from github.Repository import Repository
 
@@ -12,7 +12,7 @@ from src.driven.settings import GITHUB_TOKEN, GITHUB_REPOSITORY
 from src.driver.console.Assigners import Assigners
 
 
-class Dependencies(DeclarativeContainer):
+class Dependencies(containers.DeclarativeContainer):
     client = Github(login_or_token=GITHUB_TOKEN)
     repository: Repository = client.get_repo(full_name_or_id=GITHUB_REPOSITORY)
 

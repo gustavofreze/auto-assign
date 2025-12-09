@@ -11,30 +11,65 @@ ifeq ($(ARCH),arm64)
     PLATFORM := --platform=linux/amd64
 endif
 
-IMAGE = python:3.11-alpine
+IMAGE = gustavofreze/python:3.14
 PYTHON = .venv/bin/python
 DOCKER_RUN = docker run ${PLATFORM} --rm -it -v ${PWD}:/app --env-file .env.development -w /app ${IMAGE} sh -c
 
-.PHONY: configure run test clean
+.DEFAULT_GOAL := help
 
-configure:
-	@${DOCKER_RUN} "pip install --upgrade pip poetry \
-						&& poetry config virtualenvs.in-project true \
-						&& poetry install --with dev --sync --no-root"
+.PHONY: configure
+configure: ## Configure development environment
+	@${DOCKER_RUN} "poetry config virtualenvs.in-project true \
+		&& poetry env use python3.14 \
+		&& poetry install --no-cache \
+		&& poetry sync"
 
-run:
+.PHONY: run
+run: ## Run the application
 	@${DOCKER_RUN} "${PYTHON} -m src.main"
 
-test:
+.PHONY: test
+test: ## Run tests with coverage
 	@${DOCKER_RUN} "${PYTHON} -m coverage run --rcfile=.coveragerc -m unittest discover test '*Test.py' \
-						&& ${PYTHON} -m coverage report && ${PYTHON} -m coverage html"
+		&& ${PYTHON} -m coverage report && ${PYTHON} -m coverage html"
 
-review:
+.PHONY: review
+review: ## Run static code analysis
 	@${DOCKER_RUN} "${PYTHON} -m pylint src test --rcfile=.pylintrc"
 
-show-coverage:
+.PHONY: show-coverage
+show-reports: ## Open static analysis reports (e.g., coverage, lints) in the browser
 	@sensible-browser htmlcov/index.html
 
-clean:
+.PHONY: clean
+clean: ## Remove virtualenv and generated artifacts
 	@sudo chown -R ${USER}:${USER} ${PWD}
-	@rm -rf .venv .coverage poetry.lock
+	@rm -rf .venv .coverage htmlcov poetry.lock
+
+.PHONY: help
+help: ## Display this help message
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Setup and run"
+	@grep -E '^(configure|run):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Testing"
+	@grep -E '^(test):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Code review"
+	@grep -E '^(review):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Reports"
+	@grep -E '^(show-coverage):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Cleanup"
+	@grep -E '^(clean):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Help"
+	@grep -E '^(help):.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'

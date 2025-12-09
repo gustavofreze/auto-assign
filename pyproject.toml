@@ -1,20 +1,23 @@
 [tool.poetry]
 name = "auto-assign"
+readme = "README.md"
+license = "MIT"
 version = "0.1.0"
+keywords = ["auto-assign", "issues", "pull-requests", "github", "action"]
 description = "GitHub action that automatically assigns issues and pull requests to specified assignees."
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
-PyGithub = "^2.5"
-dependency-injector = "^4.44"
+python = "^3.14"
+PyGithub = "^2.8"
+dependency-injector = "^4.48"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4"
-pylint = "^3.3"
-coverage = "^7.6"
+pytest = "^9.0"
+pylint = "^4.0"
+coverage = "^7.13"
 parameterized = "^0.9"
 
 [build-system]
-requires = ["poetry>=1.0.0"]
+requires = ["poetry-core>=2.2"]
 build-backend = "poetry.core.masonry.api"

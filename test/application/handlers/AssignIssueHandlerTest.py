@@ -33,8 +33,8 @@ class AssignIssueHandlerTest(TestCase):
         """Given that I have issues that have not been assigned to any user"""
         self.repository.add_issues(issues=issues)
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these issues occurs"""
         command = assign_issues(assignees=assignees)
@@ -56,8 +56,8 @@ class AssignIssueHandlerTest(TestCase):
         """Given that I have issues that have already been assigned to a user"""
         self.repository.add_issues(issues=issues)
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these issues occurs"""
         command = assign_issues(assignees=assignees)
@@ -75,8 +75,8 @@ class AssignIssueHandlerTest(TestCase):
         """Given that there are no issues in the repository"""
         self.repository.remove_issues()
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these issues occurs"""
         command = assign_issues(assignees=assignees)
@@ -100,8 +100,8 @@ class AssignIssueHandlerTest(TestCase):
         """And there is a request for the assignment of these issues"""
         command = assign_issues(assignees=assignees, allow_no_assignees=False)
 
-        """And that the assignee of the request is not a contributor"""
-        self.repository.remove_contributors(contributors=command.assignees)
+        """And that the assignee of the request is not an available assignee"""
+        self.repository.remove_assignees(assignees=command.assignees)
 
         with self.assertRaises(MissingAssignees) as context:
             """When this request is executed"""
@@ -126,8 +126,8 @@ class AssignIssueHandlerTest(TestCase):
             allow_no_assignees=False
         )
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         with self.assertRaises(IssueNotAssigned) as context:
             """When this request is executed"""

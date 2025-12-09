@@ -33,8 +33,8 @@ class AssignPullRequestHandlerTest(TestCase):
         """Given that I have pull requests that have not been assigned to any user"""
         self.repository.add_pull_requests(pulls=pulls)
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these pull request occurs"""
         command = assign_pull_requests(assignees=assignees)
@@ -56,8 +56,8 @@ class AssignPullRequestHandlerTest(TestCase):
         """Given that I have pull requests that have already been assigned to a user"""
         self.repository.add_pull_requests(pulls=pulls)
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these pull request occurs"""
         command = assign_pull_requests(assignees=assignees)
@@ -75,8 +75,8 @@ class AssignPullRequestHandlerTest(TestCase):
         """Given that there are no pull requests in the repository"""
         self.repository.remove_pull_requests()
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         """And that a request for assignment of these pull request occurs"""
         command = assign_pull_requests(assignees=assignees)
@@ -100,8 +100,8 @@ class AssignPullRequestHandlerTest(TestCase):
         """And there is a request for the assignment of these pull requests"""
         command = assign_pull_requests(assignees=assignees, allow_no_assignees=False)
 
-        """And that the assignee of the request is not a contributor"""
-        self.repository.remove_contributors(contributors=command.assignees)
+        """And that the assignee of the request is not an available assignee"""
+        self.repository.remove_assignees(assignees=command.assignees)
 
         with self.assertRaises(MissingAssignees) as context:
             """When this request is executed"""
@@ -126,8 +126,8 @@ class AssignPullRequestHandlerTest(TestCase):
             allow_no_assignees=False
         )
 
-        """And that the assignees are repository contributors"""
-        self.repository.add_contributors(contributors=assignees)
+        """And that the assignees are repository assignees"""
+        self.repository.add_assignees(assignees=assignees)
 
         with self.assertRaises(PullRequestNotAssigned) as context:
             """When this request is executed"""
