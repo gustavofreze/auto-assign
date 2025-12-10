@@ -1,14 +1,20 @@
 import logging
-import sys
 import time
 
-from src.driven.settings import GITHUB_ACTOR, ASSIGNEES, ALLOW_SELF_ASSIGN, ALLOW_NO_ASSIGNEES, ASSIGNMENT_OPTIONS
-from src.driver.console.ExitCode import ExitCode
-from src.driver.console.Request import Request
+from src.driven.settings import (
+    ASSIGNEES,
+    GITHUB_ACTOR,
+    GITHUB_OUTPUT,
+    ALLOW_SELF_ASSIGN,
+    ALLOW_NO_ASSIGNEES,
+    ASSIGNMENT_OPTIONS,
+)
+from src.driver.console.models.Request import Request
+from src.driver.console.models.Result import Result
 from src.starter.Dependencies import Dependencies
 
 
-def main() -> ExitCode:
+def main() -> Result:
     time.tzset()
     logger = logging.getLogger(__name__)
 
@@ -30,9 +36,11 @@ def main() -> ExitCode:
 
     except Exception as exception:
         logger.error(str(exception))
-        return ExitCode.UNEXPECTED_FAILURE
+        return Result.unexpected_failure()
 
 
 if __name__ == '__main__':
-    exit_code = main()
-    sys.exit(exit_code.value)
+    result = main()
+
+    with open(file=GITHUB_OUTPUT, mode="a", encoding="utf-8") as writer:
+        writer.write(f"result={result.to_json()}\n")

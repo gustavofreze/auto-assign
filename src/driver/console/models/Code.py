@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class ExitCode(IntEnum):
+class Code(IntEnum):
     """Exit codes used by the assignment process."""
 
     SUCCESS = 0

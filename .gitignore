@@ -7,3 +7,4 @@ htmlcov
 
 poetry.lock
 **__pycache__
+/github_output.json

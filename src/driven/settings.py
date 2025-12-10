@@ -5,6 +5,7 @@ from src.driven.Environment import Environment
 ASSIGNEES: List[str] = Environment.get(variable='INPUT_ASSIGNEES').to_list()
 GITHUB_ACTOR: str = Environment.get(variable='GITHUB_ACTOR').to_str()
 GITHUB_TOKEN: str = Environment.get(variable='INPUT_GITHUB_TOKEN').to_str()
+GITHUB_OUTPUT: str = Environment.get(variable='GITHUB_OUTPUT', default_value_if_not_found="github_output.json").to_str()
 GITHUB_REPOSITORY: str = Environment.get(variable='GITHUB_REPOSITORY').to_str()
 ALLOW_SELF_ASSIGN: bool = Environment.get(variable='INPUT_ALLOW_SELF_ASSIGN').to_bool()
 ASSIGNMENT_OPTIONS: List[str] = Environment.get(variable='INPUT_ASSIGNMENT_OPTIONS').to_list()

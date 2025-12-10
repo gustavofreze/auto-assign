@@ -8,8 +8,9 @@ from test.mocks.handlers.AssignPullRequestIssueHandlerMock import AssignPullRequ
 from src.application.domain.exceptions.IssueNotAssigned import IssueNotAssigned
 from src.application.domain.exceptions.PullRequestNotAssigned import PullRequestNotAssigned
 from src.driver.console.Assigners import Assigners
-from src.driver.console.ExitCode import ExitCode
-from src.driver.console.Request import Request
+from src.driver.console.models.Code import Code
+from src.driver.console.models.Request import Request
+
 
 class AssignersTest(TestCase):
 
@@ -46,7 +47,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then SUCCESS should be returned"""
-        self.assertEqual(actual.value, ExitCode.SUCCESS)
+        self.assertEqual(Code.SUCCESS, actual.code())
+        self.assertEqual('{"code": 0}', actual.to_json())
 
     def test_execute_succeeds_for_pull_request_only(self):
         """Given a request that targets only pull requests"""
@@ -62,7 +64,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then SUCCESS should be returned"""
-        self.assertEqual(actual.value, ExitCode.SUCCESS)
+        self.assertEqual(Code.SUCCESS, actual.code())
+        self.assertEqual('{"code": 0}', actual.to_json())
 
     def test_execute_succeeds_for_pull_request_and_issue(self):
         """Given a request that targets both pull request and issue"""
@@ -78,7 +81,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then SUCCESS should be returned"""
-        self.assertEqual(actual.value, ExitCode.SUCCESS)
+        self.assertEqual(Code.SUCCESS, actual.code())
+        self.assertEqual('{"code": 0}', actual.to_json())
 
     def test_execute_when_issue_not_assigned(self):
         """Given a request that targets only issues"""
@@ -97,7 +101,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then ASSIGNMENT_FAILURE should be returned"""
-        self.assertEqual(actual.value, ExitCode.ASSIGNMENT_FAILURE)
+        self.assertEqual(Code.ASSIGNMENT_FAILURE, actual.code())
+        self.assertEqual('{"code": 2}', actual.to_json())
 
     def test_execute_when_pull_request_not_assigned(self):
         """Given a request that targets only pull requests"""
@@ -116,7 +121,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then ASSIGNMENT_FAILURE should be returned"""
-        self.assertEqual(actual.value, ExitCode.ASSIGNMENT_FAILURE)
+        self.assertEqual(Code.ASSIGNMENT_FAILURE, actual.code())
+        self.assertEqual('{"code": 2}', actual.to_json())
 
     def test_execute_when_pull_request_and_issue_not_assigned(self):
         """Given a request that targets both pull requests and issues"""
@@ -135,7 +141,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then ASSIGNMENT_FAILURE should be returned"""
-        self.assertEqual(actual.value, ExitCode.ASSIGNMENT_FAILURE)
+        self.assertEqual(Code.ASSIGNMENT_FAILURE, actual.code())
+        self.assertEqual('{"code": 2}', actual.to_json())
 
     def test_execute_when_invalid_assignee_options(self):
         """Given a request with invalid assignee options"""
@@ -151,7 +158,8 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then CONFIGURATION_MISSING should be returned"""
-        self.assertEqual(actual.value, ExitCode.CONFIGURATION_MISSING)
+        self.assertEqual(Code.CONFIGURATION_MISSING, actual.code())
+        self.assertEqual('{"code": 3}', actual.to_json())
 
     def test_execute_when_unexpected_failure(self):
         """Given a request that targets only issues"""
@@ -170,4 +178,5 @@ class AssignersTest(TestCase):
         actual = self.assigners.execute(request=request)
 
         """Then GENERAL_ERROR should be returned"""
-        self.assertEqual(actual.value, ExitCode.UNEXPECTED_FAILURE)
+        self.assertEqual(Code.UNEXPECTED_FAILURE, actual.code())
+        self.assertEqual('{"code": 1}', actual.to_json())

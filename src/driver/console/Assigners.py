@@ -7,9 +7,9 @@ from src.application.domain.exceptions.DomainException import DomainException
 from src.application.handlers.AssignIssueHandler import AssignIssueHandler
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
 from src.application.handlers.AssignPullRequestIssueHandler import AssignPullRequestIssueHandler
-from src.driver.console.AssigneeOptions import AssigneeOptions
-from src.driver.console.ExitCode import ExitCode
-from src.driver.console.Request import Request
+from src.driver.console.models.AssigneeOptions import AssigneeOptions
+from src.driver.console.models.Request import Request
+from src.driver.console.models.Result import Result
 from src.driver.exceptions.InvalidAssigneeOptions import InvalidAssigneeOptions
 
 
@@ -27,7 +27,7 @@ class Assigners:
         self.__issue_handler = issue_handler
         self.__pull_issue_handler = pull_issue_handler
 
-    def execute(self, request: Request) -> ExitCode:
+    def execute(self, request: Request) -> Result:
         try:
             assignee_options = AssigneeOptions(request.assignment_options)
 
@@ -63,16 +63,16 @@ class Assigners:
                 )
                 self.__issue_handler.handle(command=command)
 
-            return ExitCode.SUCCESS
+            return Result.success()
 
         except InvalidAssigneeOptions as exception:
             self.__logger.error(str(exception))
-            return ExitCode.CONFIGURATION_MISSING
+            return Result.configuration_missing()
 
         except DomainException as exception:
             self.__logger.error(str(exception))
-            return ExitCode.ASSIGNMENT_FAILURE
+            return Result.assignment_failure()
 
         except Exception as exception:
             self.__logger.error(str(exception))
-            return ExitCode.UNEXPECTED_FAILURE
+            return Result.unexpected_failure()
