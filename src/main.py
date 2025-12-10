@@ -2,7 +2,7 @@ import logging
 import sys
 import time
 
-from src.driven.settings import GITHUB_ACTOR, ASSIGNMENT_OPTIONS, ASSIGNEES, ALLOW_SELF_ASSIGN, ALLOW_NO_ASSIGNEES
+from src.driven.settings import GITHUB_ACTOR, ASSIGNEES, ALLOW_SELF_ASSIGN, ALLOW_NO_ASSIGNEES, ASSIGNMENT_OPTIONS
 from src.driver.console.ExitCode import ExitCode
 from src.driver.console.Request import Request
 from src.starter.Dependencies import Dependencies
@@ -27,10 +27,6 @@ def main() -> ExitCode:
         assigners = dependencies.assigners()
 
         return assigners.execute(request=request)
-
-    except EnvironmentError as exception:
-        logger.error(str(exception))
-        return ExitCode.CONFIGURATION_MISSING
 
     except Exception as exception:
         logger.error(str(exception))
