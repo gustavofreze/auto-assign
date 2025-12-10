@@ -16,8 +16,8 @@ class AdapterTest(TestCase):
         self.repository.reset_mock()
 
     def test_exception_handling(self):
-        """Given that an exception is raised when retrieving contributors"""
-        self.repository.with_contributors_exception(
+        """Given that an exception is raised when retrieving assignees"""
+        self.repository.with_assignees_exception(
             exception=GithubException(
                 status=500,
                 data='Internal Server Error',
@@ -30,3 +30,14 @@ class AdapterTest(TestCase):
 
         """Then an empty list should be returned"""
         self.assertEqual([], assignees)
+
+    def test_returns_valid_assignees_only(self):
+        """Given that repository assignees are configured"""
+        self.repository.add_assignees(assignees=['user1', 'user2'])
+
+        """When exists is called with a mix of valid and invalid values"""
+        assignees = self.adapter.exists(assignees=['user1', 'user3'])
+
+        """Then only valid assignees should be returned"""
+        self.assertEqual(['user1'], assignees)
+        self.repository.get_assignees.assert_called_once_with()

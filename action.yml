@@ -10,9 +10,9 @@ inputs:
     required: true
     description: 'GitHub app installation access token.'
   allow_self_assign:
-      default: 'true'
-      required: false
-      description: 'Flag that allows self-assignment to an issue or pull request.'
+    default: 'true'
+    required: false
+    description: 'Flag that allows self-assignment to an issue or pull request.'
   allow_no_assignees:
     default: 'false'
     required: false
@@ -25,6 +25,10 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+
+outputs:
+  result:
+    description: 'Object containing information about the processing performed by the action.'
 
 branding:
   icon: 'git-pull-request'

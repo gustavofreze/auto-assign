@@ -50,7 +50,7 @@ jobs:
       issues: write
     steps:
       - name: Assign issues
-        uses: gustavofreze/auto-assign@1.0.0
+        uses: gustavofreze/auto-assign@x.y.z
         with:
           assignees: 'user1,user2'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
@@ -76,7 +76,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Assign pull requests
-        uses: gustavofreze/auto-assign@1.0.0
+        uses: gustavofreze/auto-assign@x.y.z
         with:
           assignees: 'user1,user2'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
@@ -106,7 +106,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Assign issues and pull requests
-        uses: gustavofreze/auto-assign@1.0.0
+        uses: gustavofreze/auto-assign@x.y.z
         with:
           assignees: 'user1,user2'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
@@ -142,13 +142,72 @@ jobs:
       pull-requests: write
     steps:
       - name: Assign issues and pull requests
-        uses: gustavofreze/auto-assign@1.0.0
+        uses: gustavofreze/auto-assign@x.y.z
         with:
           assignees: 'user1,user2'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           allow_self_assign: 'true'
           allow_no_assignees: 'true'
           assignment_options: 'ISSUE,PULL_REQUEST'
+```
+
+<div id='output'></div>
+
+### Output
+
+The action produces a structured output that allows workflows to programmatically inspect the result of the assignment
+process.  
+This output is exposed via the `result` object, which contains information describing how the action executed and
+whether it completed successfully or encountered any issues.
+
+| Field         | Type    | Description                                                                                                                                                                                                                                                        |
+|:--------------|---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `result`      | Object  | Object containing information about the processing performed by the action.                                                                                                                                                                                        |
+| `result.code` | Integer | Represents the exit status of the execution:<br><br>**0** – Execution completed successfully.<br>**1** – An unexpected error occurred during execution.<br>**2** – Failed to assign pull requests or issues.<br>**3** – A required configuration value is missing. |
+
+The example below shows how to react to different outcome codes returned by the action:
+
+```yml
+name: Auto assign issues and pull requests
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Assign issues and pull requests
+        uses: gustavofreze/auto-assign@x.y.z
+        with:
+          assignees: 'user1,user2'
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          allow_self_assign: 'true'
+          allow_no_assignees: 'true'
+          assignment_options: 'ISSUE,PULL_REQUEST'
+
+      - name: Success logic
+        if: ${{ steps.autoassign.outputs.result.code == 0 }}
+        run: |
+          echo "Assignment completed successfully."
+
+      - name: Unexpected error handling
+        if: ${{ steps.autoassign.outputs.result.code == 1 }}
+        run: |
+          echo "An unexpected error occurred during execution."
+
+      - name: Assignment failure handling
+        if: ${{ steps.autoassign.outputs.result.code == 2 }}
+        run: |
+          echo "The action failed to assign issues or pull requests."
 ```
 
 <div id='license'></div>

@@ -27,5 +27,9 @@ class Adapter(Issues):
 
     def apply(self, assigned_issue: Issue):
         assignees = assigned_issue.assignees
+
+        if not assignees:
+            return
+
         issue = self.__repository.get_issue(number=assigned_issue.number)
         issue.add_to_assignees(*assignees)
