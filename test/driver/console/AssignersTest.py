@@ -36,7 +36,7 @@ class AssignersTest(TestCase):
         """Given a request that targets only issues"""
         request = Request(
             actor="user3",
-            options=['ISSUE'],
+            assignment_options=['ISSUE'],
             assignees=['user3', 'user4'],
             allow_self_assign=True,
             allow_no_assignees=False
@@ -52,7 +52,7 @@ class AssignersTest(TestCase):
         """Given a request that targets only pull requests"""
         request = Request(
             actor="user2",
-            options=['PULL_REQUEST'],
+            assignment_options=['PULL_REQUEST'],
             assignees=['user2'],
             allow_self_assign=False,
             allow_no_assignees=True
@@ -68,7 +68,7 @@ class AssignersTest(TestCase):
         """Given a request that targets both pull request and issue"""
         request = Request(
             actor="user1",
-            options=['PULL_REQUEST', 'ISSUE'],
+            assignment_options=['PULL_REQUEST', 'ISSUE'],
             assignees=['user1', 'user2'],
             allow_self_assign=True,
             allow_no_assignees=False
@@ -84,7 +84,7 @@ class AssignersTest(TestCase):
         """Given a request that targets only issues"""
         request = Request(
             actor="user4",
-            options=['ISSUE'],
+            assignment_options=['ISSUE'],
             assignees=['user4', 'user5'],
             allow_self_assign=False,
             allow_no_assignees=False
@@ -103,7 +103,7 @@ class AssignersTest(TestCase):
         """Given a request that targets only pull requests"""
         request = Request(
             actor="user3",
-            options=['PULL_REQUEST'],
+            assignment_options=['PULL_REQUEST'],
             assignees=['user3', 'user4'],
             allow_self_assign=True,
             allow_no_assignees=False
@@ -122,7 +122,7 @@ class AssignersTest(TestCase):
         """Given a request that targets both pull requests and issues"""
         request = Request(
             actor="user5",
-            options=['PULL_REQUEST', 'ISSUE'],
+            assignment_options=['PULL_REQUEST', 'ISSUE'],
             assignees=['user5'],
             allow_self_assign=False,
             allow_no_assignees=True
@@ -141,7 +141,7 @@ class AssignersTest(TestCase):
         """Given a request with invalid assignee options"""
         request = Request(
             actor="user1",
-            options=[],
+            assignment_options=[],
             assignees=['user1'],
             allow_self_assign=True,
             allow_no_assignees=False
@@ -157,7 +157,7 @@ class AssignersTest(TestCase):
         """Given a request that targets only issues"""
         request = Request(
             actor="user2",
-            options=['ISSUE'],
+            assignment_options=['ISSUE'],
             assignees=['user2', 'user3'],
             allow_self_assign=False,
             allow_no_assignees=True

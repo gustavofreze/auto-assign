@@ -1,8 +1,7 @@
 import logging
 
 from dependency_injector import containers, providers
-from github import Github
-from github.Repository import Repository
+from github import Github, Auth
 
 from src.application.handlers.AssignIssueHandler import AssignIssueHandler
 from src.application.handlers.AssignPullRequestHandler import AssignPullRequestHandler
@@ -15,20 +14,52 @@ from src.driver.console.Assigners import Assigners
 
 
 class Dependencies(containers.DeclarativeContainer):
-    client = Github(login_or_token=GITHUB_TOKEN)
-    repository: Repository = client.get_repo(full_name_or_id=GITHUB_REPOSITORY)
+    client = providers.Singleton(
+        Github,
+        auth=Auth.Token(GITHUB_TOKEN),
+    )
 
-    assignees = providers.Singleton(AssigneesAdapter, repository=repository)
-    pull_adapter = providers.Singleton(PullRequestAdapter, repository=repository)
-    issues_adapter = providers.Singleton(IssuesAdapter, repository=repository)
+    repository = providers.Singleton(
+        lambda client: client.get_repo(GITHUB_REPOSITORY),
+        client=client
+    )
 
-    pull_handler = providers.Factory(AssignPullRequestHandler, pulls=pull_adapter, assignees=assignees)
-    issue_handler = providers.Factory(AssignIssueHandler, issues=issues_adapter, assignees=assignees)
-    pull_issue_handler = providers.Factory(AssignPullRequestIssueHandler, pulls=pull_handler, issues=issue_handler)
+    assignees = providers.Singleton(
+        AssigneesAdapter,
+        repository=repository
+    )
+
+    pull_adapter = providers.Singleton(
+        PullRequestAdapter,
+        repository=repository
+    )
+
+    issues_adapter = providers.Singleton(
+        IssuesAdapter,
+        repository=repository
+    )
+
+    pull_handler = providers.Factory(
+        AssignPullRequestHandler,
+        pulls=pull_adapter,
+        assignees=assignees,
+    )
+
+    issue_handler = providers.Factory(
+        AssignIssueHandler,
+        issues=issues_adapter,
+        assignees=assignees
+    )
+
+    pull_issue_handler = providers.Factory(
+        AssignPullRequestIssueHandler,
+        pulls=pull_handler,
+        issues=issue_handler,
+    )
 
     assigners = providers.Singleton(
         Assigners,
-        logger=logging.getLogger("Assigners"),
+        logger=logging.getLogger(__name__),
         pull_handler=pull_handler,
         issue_handler=issue_handler,
         pull_issue_handler=pull_issue_handler

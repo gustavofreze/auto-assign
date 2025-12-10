@@ -8,24 +8,20 @@ class Request:
     def __init__(
             self,
             actor: str,
-            options: Iterable[str],
             assignees: List[str],
             allow_self_assign: bool,
-            allow_no_assignees: bool
+            allow_no_assignees: bool,
+            assignment_options: Iterable[str]
     ) -> None:
         self._actor = actor
-        self._options = list(options or [])
         self._assignees = assignees
         self._allow_self_assign = allow_self_assign
         self._allow_no_assignees = allow_no_assignees
+        self._assignment_options = list(assignment_options or [])
 
     @property
     def actor(self) -> str:
         return self._actor
-
-    @property
-    def options(self) -> List[str]:
-        return self._options
 
     @property
     def assignees(self) -> List[str]:
@@ -38,3 +34,7 @@ class Request:
     @property
     def allow_no_assignees(self) -> bool:
         return self._allow_no_assignees
+
+    @property
+    def assignment_options(self) -> List[str]:
+        return self._assignment_options

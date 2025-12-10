@@ -29,7 +29,7 @@ class Assigners:
 
     def execute(self, request: Request) -> ExitCode:
         try:
-            assignee_options = AssigneeOptions(request.options)
+            assignee_options = AssigneeOptions(request.assignment_options)
 
             actor = request.actor
             assignees = request.assignees

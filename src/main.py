@@ -1,3 +1,4 @@
+import logging
 import sys
 import time
 
@@ -9,20 +10,31 @@ from src.starter.Dependencies import Dependencies
 
 def main() -> ExitCode:
     time.tzset()
+    logger = logging.getLogger(__name__)
 
-    dependencies = Dependencies()
-    dependencies.init_resources()
+    try:
+        dependencies = Dependencies()
+        dependencies.init_resources()
 
-    request = Request(
-        actor=GITHUB_ACTOR,
-        options=ASSIGNMENT_OPTIONS,
-        assignees=ASSIGNEES,
-        allow_self_assign=ALLOW_SELF_ASSIGN,
-        allow_no_assignees=ALLOW_NO_ASSIGNEES
-    )
+        request = Request(
+            actor=GITHUB_ACTOR,
+            assignees=ASSIGNEES,
+            allow_self_assign=ALLOW_SELF_ASSIGN,
+            allow_no_assignees=ALLOW_NO_ASSIGNEES,
+            assignment_options=ASSIGNMENT_OPTIONS
+        )
 
-    assigners = dependencies.assigners()
-    return assigners.execute(request)
+        assigners = dependencies.assigners()
+
+        return assigners.execute(request=request)
+
+    except EnvironmentError as exception:
+        logger.error(str(exception))
+        return ExitCode.CONFIGURATION_MISSING
+
+    except Exception as exception:
+        logger.error(str(exception))
+        return ExitCode.UNEXPECTED_FAILURE
 
 
 if __name__ == '__main__':
