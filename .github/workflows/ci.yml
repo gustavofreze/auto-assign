@@ -29,7 +29,7 @@ jobs:
         run: pip install poetry
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
@@ -57,7 +57,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Use cached dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
@@ -79,7 +79,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Use cached dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
