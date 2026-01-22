@@ -1,9 +1,4 @@
-ifeq ($(OS),Windows_NT)
-    PWD := $(shell cd)
-else
-    PWD := $(shell pwd -L)
-endif
-
+PWD := $(CURDIR)
 ARCH := $(shell uname -m)
 PLATFORM :=
 
@@ -11,7 +6,7 @@ ifeq ($(ARCH),arm64)
     PLATFORM := --platform=linux/amd64
 endif
 
-IMAGE = gustavofreze/python:3.14
+IMAGE = gustavofreze/python:3.14-alpine
 PYTHON = .venv/bin/python
 DOCKER_RUN = docker run ${PLATFORM} --rm -it -v ${PWD}:/app --env-file .env.development -w /app ${IMAGE} sh -c
 
