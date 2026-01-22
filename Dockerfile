@@ -1,9 +1,12 @@
-FROM gustavofreze/python:3.14
+FROM gustavofreze/python:3.14-alpine
 
-LABEL author="Gustavo Freze" \
-      maintainer="Gustavo Freze" \
-      org.label-schema.name="gustavofreze/auto-assign" \
-      org.label-schema.schema-version="1.0"
+LABEL org.opencontainers.image.url="https://github.com/gustavofreze/auto-assign"
+LABEL org.opencontainers.image.title="gustavofreze/auto-assign"
+LABEL org.opencontainers.image.source="https://github.com/gustavofreze/auto-assign"
+LABEL org.opencontainers.image.authors="Gustavo Freze"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.description="GitHub action that automatically assigns issues and pull requests to specified assignees."
+LABEL org.opencontainers.image.documentation="https://github.com/gustavofreze/auto-assign/blob/main/README.md"
 
 ENV PYTHONPATH="/app"
 
