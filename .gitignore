@@ -2,9 +2,13 @@ venv
 htmlcov
 
 .venv
+.venv-ide
 .idea
 .coverage
+.mypy_cache
+.pytest_cache
 
-poetry.lock
 **__pycache__
 /github_output.json
+/.smoke
+/.env.local

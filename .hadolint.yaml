@@ -1,0 +1,5 @@
+failure-threshold: info
+ignored:
+  # DL3002: a Docker container action must run as root, because the runner mounts GITHUB_WORKSPACE and the
+  # GITHUB_OUTPUT file with its own ownership (rules/docker-images.md, item 10).
+  - DL3002

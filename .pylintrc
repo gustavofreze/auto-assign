@@ -186,12 +186,7 @@ function-naming-style=snake_case
 #function-rgx=
 
 # Good variable names which should always be accepted, separated by a comma.
-good-names=i,
-           j,
-           k,
-           ex,
-           Run,
-           _
+good-names=_
 
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
@@ -440,7 +435,6 @@ disable=raw-checker-failed,
         bad-inline-option,
         locally-disabled,
         file-ignored,
-        invalid-name,
         broad-exception-caught,
         c-extension-no-member,
         too-few-public-methods,
@@ -448,7 +442,6 @@ disable=raw-checker-failed,
         useless-suppression,
         deprecated-pragma,
         missing-docstring,
-        pointless-string-statement,
         use-implicit-booleaness-not-comparison-to-string,
         use-implicit-booleaness-not-comparison-to-zero,
         use-symbolic-message-instead

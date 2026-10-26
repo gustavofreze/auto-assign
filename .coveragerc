@@ -1,8 +1,14 @@
 [run]
+branch = True
+source = src
 omit =
-    test/*
+    src/main.py
+    src/dependencies.py
 
 [report]
-exclude_lines =
-    pragma: no cover
-    @abstract
+fail_under = 100
+show_missing = True
+skip_empty = True
+
+[html]
+directory = htmlcov
