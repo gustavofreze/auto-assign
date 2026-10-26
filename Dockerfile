@@ -1,24 +1,26 @@
-FROM gustavofreze/python:3.14-alpine
+# syntax=docker/dockerfile:1
+FROM gustavofreze/python:3.14-builder AS builder
 
-LABEL org.opencontainers.image.url="https://github.com/gustavofreze/auto-assign"
-LABEL org.opencontainers.image.title="gustavofreze/auto-assign"
-LABEL org.opencontainers.image.source="https://github.com/gustavofreze/auto-assign"
-LABEL org.opencontainers.image.authors="Gustavo Freze"
-LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.description="GitHub action that automatically assigns issues and pull requests to specified assignees."
-LABEL org.opencontainers.image.documentation="https://github.com/gustavofreze/auto-assign/blob/main/README.md"
+COPY pyproject.toml poetry.lock /app/
+
+RUN poetry install --only main --no-cache
+
+COPY src /app/src
+
+FROM gustavofreze/python:3.14-runtime
+
+LABEL org.opencontainers.image.url="https://github.com/gustavofreze/auto-assign" \
+      org.opencontainers.image.title="gustavofreze/auto-assign" \
+      org.opencontainers.image.source="https://github.com/gustavofreze/auto-assign" \
+      org.opencontainers.image.authors="Gustavo Freze" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.description="GitHub action that automatically assigns issues and pull requests to specified assignees." \
+      org.opencontainers.image.documentation="https://github.com/gustavofreze/auto-assign/blob/main/README.md"
 
 ENV PYTHONPATH="/app"
 
-WORKDIR /app
+COPY --from=builder --chown=app:app /app /app
 
-COPY pyproject.toml ./
+USER 0
 
-RUN poetry config virtualenvs.in-project true \
-  && poetry env use python3.14 \
-  && poetry install --no-cache \
-  && poetry sync
-
-COPY src ./src
-
-CMD ["/app/.venv/bin/python", "-m", "src.main"]
+CMD ["python3", "-P", "-m", "src.main"]

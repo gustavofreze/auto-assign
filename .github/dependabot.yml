@@ -5,6 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 0
     labels:
       - "python"
@@ -20,6 +22,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "build"
     labels:

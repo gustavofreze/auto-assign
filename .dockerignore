@@ -1,0 +1,14 @@
+.git
+.github
+.idea
+.venv
+.venv-ide
+.claude
+.coverage
+.mypy_cache
+.pytest_cache
+.env*
+.smoke
+htmlcov
+tests
+github_output.json

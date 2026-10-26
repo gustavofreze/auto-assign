@@ -1,46 +1,72 @@
 import logging
-import time
+import os
+from collections.abc import Mapping
 
-from src.driven.settings import (
-    ASSIGNEES,
-    GITHUB_ACTOR,
-    GITHUB_OUTPUT,
-    ALLOW_SELF_ASSIGN,
-    ALLOW_NO_ASSIGNEES,
-    ASSIGNMENT_OPTIONS,
-)
-from src.driver.console.models.Request import Request
-from src.driver.console.models.Result import Result
-from src.starter.Dependencies import Dependencies
+from src.dependencies import Dependencies
+from src.driven.environment.action_output import ActionOutput
+from src.driven.environment.action_settings import ActionSettings
+from src.driven.environment.missing_action_input import MissingActionInput
+from src.driven.environment.triggering_event_unreadable import TriggeringEventUnreadable
+from src.driven.github.assignment_journal import AssignmentJournal
+from src.driver.console.annotation_formatter import AnnotationFormatter
+from src.driver.console.models.request import Request
+from src.driver.console.models.result import Result
+
+LOGGER = logging.getLogger('auto-assign')
 
 
-def main() -> Result:
-    time.tzset()
-    logger = logging.getLogger(__name__)
+def run(environment: Mapping[str, str], journal: AssignmentJournal) -> Result:
+    try:
+        settings = ActionSettings.from_environment(environment=environment)
+    except (MissingActionInput, TriggeringEventUnreadable) as invalid_configuration:
+        LOGGER.exception(str(invalid_configuration), exc_info=False)
+        return Result.configuration_missing(message=str(invalid_configuration))
+    except Exception as settings_failure:
+        LOGGER.exception(str(settings_failure))
+        return Result.unexpected_failure(message=str(settings_failure))
 
     try:
-        dependencies = Dependencies()
-        dependencies.init_resources()
+        assigners = Dependencies(settings=settings, journal=journal).assigners()
+    except Exception as wiring_failure:
+        LOGGER.exception(str(wiring_failure))
+        return Result.unexpected_failure(message=str(wiring_failure))
 
-        request = Request(
-            actor=GITHUB_ACTOR,
-            assignees=ASSIGNEES,
-            allow_self_assign=ALLOW_SELF_ASSIGN,
-            allow_no_assignees=ALLOW_NO_ASSIGNEES,
-            assignment_options=ASSIGNMENT_OPTIONS
-        )
+    request = Request(
+        actor=settings.actor,
+        assignees=settings.assignees,
+        skip_bots=settings.preferences.skip_bots,
+        skip_drafts=settings.preferences.skip_drafts,
+        assign_author=settings.preferences.assign_author,
+        allow_self_assign=settings.preferences.allow_self_assign,
+        allow_no_assignees=settings.preferences.allow_no_assignees,
+        assignment_options=settings.assignment_options
+    )
 
-        assigners = dependencies.assigners()
-
-        return assigners.execute(request=request)
-
-    except Exception as exception:
-        logger.error(str(exception))
-        return Result.unexpected_failure()
+    return assigners.assign(request=request)
 
 
 if __name__ == '__main__':
-    result = main()
+    handler = logging.StreamHandler()
+    handler.setFormatter(AnnotationFormatter())
+    LOGGER.addHandler(handler)
 
-    with open(file=GITHUB_OUTPUT, mode="a", encoding="utf-8") as writer:
-        writer.write(f"result={result.to_json()}\n")
+    output_path = os.environ.get('GITHUB_OUTPUT', '')
+
+    if output_path == '':
+        LOGGER.warning('GITHUB_OUTPUT is not set, so the action outputs are not written.')
+
+    assignment_journal = AssignmentJournal()
+    result = run(environment=os.environ, journal=assignment_journal)
+
+    ActionOutput(
+        output_path=output_path,
+        summary_path=os.environ.get('GITHUB_STEP_SUMMARY', '')
+    ).write(
+        outputs={
+            'result': result.to_json(
+                issues=assignment_journal.issues(),
+                pull_requests=assignment_journal.pull_requests()
+            )
+        },
+        summary=assignment_journal.summary()
+    )
