@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+
+concurrency:
+  group: release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    name: Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Publish action image
+        env:
+          VERSION: '${{ github.event.release.tag_name }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: make publish VERSION="${VERSION}"

@@ -4,31 +4,43 @@ description: 'GitHub action that automatically assigns issues and pull requests 
 inputs:
   assignees:
     required: true
-    description: 'Comma-separated list of usernames. Assignments will be made to them.'
+    description: 'Comma-separated list of logins to assign.'
+  skip_bots:
+    default: 'false'
+    required: false
+    description: 'Skips issues and pull requests opened by bots, such as dependabot[bot].'
+  skip_drafts:
+    default: 'false'
+    required: false
+    description: 'Skips draft pull requests.'
   github_token:
     default: '${{ github.token }}'
-    required: true
-    description: 'GitHub app installation access token.'
+    required: false
+    description: 'Token used to call the GitHub API. The default workflow token is enough.'
+  assign_author:
+    default: 'false'
+    required: false
+    description: 'Also assigns the author of each issue or pull request.'
   allow_self_assign:
     default: 'true'
     required: false
-    description: 'Flag that allows self-assignment to an issue or pull request.'
+    description: 'Allows the user who started the workflow to be assigned.'
   allow_no_assignees:
     default: 'false'
     required: false
-    description: 'Flag that prevents the action from failing when there are no assignees.'
+    description: 'Lets the run succeed when no assignee remains, instead of reporting code 2.'
   assignment_options:
     default: 'ISSUE'
     required: false
-    description: 'Assignment options in a GitHub action related to automatically assigning issues and pull requests.'
+    description: 'What to assign: ISSUE, PULL_REQUEST, or ISSUE,PULL_REQUEST.'
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://ghcr.io/gustavofreze/auto-assign:3.0.0'
 
 outputs:
   result:
-    description: 'Object containing information about the processing performed by the action.'
+    description: 'JSON object with the code, status, message, and the issues and pull requests assigned.'
 
 branding:
   icon: 'git-pull-request'

@@ -60,37 +60,60 @@ To start development, you will need to follow a few steps:
 - Create a new branch from the **main** branch. To give greater readability, use one of the prefixes, according to the
   implementation type, **bug-fix**/xpto, **feature**/xpto, **release**/tag.
 
-- Make the commits using the following convention:
+- Make the commits following [Conventional Commits](https://www.conventionalcommits.org), with no scope, in the form
+  `<type>: <Description>.`, where the description is in English, in the imperative mood, capitalized, and ends with a
+  period. One logical change per commit.
 
-    - **fix**: is used when there are code errors that are causing bugs.
-        - e.g (fix: Correct calculation [...])
+    - **feat**: adds new behavior visible to the action's users.
+        - e.g. (feat: Assign only the item that triggered the event.)
 
-    - **doc**: it is used when adding or modifying some documentation in the code, or the repository in question.
-        - e.g (doc: Adds README.md [...])
+    - **fix**: corrects wrong behavior.
+        - e.g. (fix: Leave the actor out when self-assignment is denied.)
 
-    - **feat**: is used when adding some new functionality from scratch to the code.
-        - e.g (feat: Adds validation [...])
+    - **refactor**: restructures code with no behavior change.
+        - e.g. (refactor: Extract the self-assignment rule into a value object.)
 
-    - **test**: is used when changes of any kind are made to the tests, whether it is the addition of new tests or
-      refactoring of existing tests.
-        - e.g (test: Adds unit test for [...])
+    - **test**: adds or adjusts tests only.
+        - e.g. (test: Cover the event-scoped listing of pull requests.)
 
-    - **style**: is used when changes are made to the style and formatting of the code that will not impact any code
-      logic.
-        - e.g (style: Standardize code as [...])
+    - **docs**: changes documentation only.
+        - e.g. (docs: Document which items are assigned per event.)
 
-    - **refactor**: it is used when a refactoring will not directly impact the code or any rules of
-      business.
-        - e.g (refactor: Optimize search [...])
+    - **build**: changes dependencies, the Dockerfile, or the Makefile.
+        - e.g. (build: Upgrade PyGithub to 2.10.)
 
-  In the description use the imperative verb in the affirmative form., e.g. (**optimizes**, **adds**, **standardizes**,
-  **adjusts**, **changes**).
+    - **ci**: changes the GitHub Actions workflows.
+        - e.g. (ci: Pin every action to a full commit SHA.)
 
-- At the end of development, after you have run the tests and automated code reviews, so that it is
-  Once the code review step is done, a new branch must be created from the **main** branch, using the prefix
+    - **chore**: housekeeping that fits no other type.
+        - e.g. (chore: Remove the unused issue mapper.)
+
+    - **revert**: undoes a previous commit.
+        - e.g. (revert: Revert "feat: Assign only the item that triggered the event.")
+
+- Before opening a pull request, run `make review` and `make test`. Both must pass.
+
+- To exercise the action against the real GitHub API without publishing anything, run `make smoke`. It builds the
+  same image the runner builds and runs it with the environment the runner injects, against a sandbox repository you
+  own. Put a fine-grained token scoped to that repository in a git-ignored `.env.local`, as
+  `INPUT_GITHUB_TOKEN=<token>`. Then pick the simulated event:
+    - e.g. (`make smoke REPOSITORY=owner/sandbox ACTOR=login EVENT=issue NUMBER=1`)
+    - e.g. (`make smoke REPOSITORY=owner/sandbox ACTOR=login EVENT=pull_request NUMBER=2 OPTIONS=PULL_REQUEST`)
+    - e.g. (`make smoke REPOSITORY=owner/sandbox ACTOR=login EVENT=scan OPTIONS=ISSUE,PULL_REQUEST`)
+
+  `ASSIGNEES` defaults to `ACTOR`. `ALLOW_SELF_ASSIGN`, `ALLOW_NO_ASSIGNEES`, `ASSIGN_AUTHOR`, `SKIP_BOTS`, and
+  `SKIP_DRAFTS` take `true` or `false`. The printed lines are what the action writes to `GITHUB_OUTPUT`, followed by
+  the step summary.
+
+- Once the tests and the automated code review pass, create a new branch from the **main** branch, using the prefix
   **release/tag**. Then open a pull request from your branch to the **release/tag** branch.
 
 - With the code review approved, merge the **release/tag** branch to the **main** branch. Create a new tag following
   o [semantic versioning](https://semver.org), and for the release, adding the prefix **v** + **tag**.
     - e.g (tag: **1.0.0**)
     - e.g (release: **v1.0.0**)
+
+- The action runs a prebuilt image, so the release branch also sets `runs.image` in `action.yml` to the tag being
+  released (`docker://ghcr.io/gustavofreze/auto-assign:<tag>`). Publishing the release triggers `release.yml`, which
+  pushes that image through `make publish`. The first time, set the `auto-assign` package visibility to **public** in
+  the GitHub package settings, so consumers can pull it.
